@@ -1,6 +1,7 @@
 ﻿using FitnessTracker.Domain.Entities;
 using FitnessTracker.Domain.IRepositories;
 using FitnessTracker.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessTracker.Infrastructure.Repositories
 {
@@ -12,29 +13,56 @@ namespace FitnessTracker.Infrastructure.Repositories
             this._context = context;
         }
 
-        void IUserRepository.DeleteUser(Guid id)
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
 
-        IEnumerable<User> IUserRepository.GetAllUsers()
+        public async Task<User?> GetUserById(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (user == null)
+            {
+                return null;
+            }
+            return user;
         }
 
-        User IUserRepository.GetUserById(Guid id)
+        public async Task<User> InsertUser(User user)
         {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;        
         }
 
-        void IUserRepository.InsertUser(User user)
+        public async Task<User?> UpdateUser(Guid id, User user)
         {
-            throw new NotImplementedException();
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (existingUser == null)
+            {
+                return null;
+            }
+            existingUser.Name = user.Name;
+            existingUser.Email = user.Email;
+
+            await _context.SaveChangesAsync();
+
+            return existingUser;
         }
 
-        void IUserRepository.UpdateUser(User user)
+        public async Task<User?> DeleteUser(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return user;
         }
+
     }
 }

@@ -29,29 +29,7 @@ namespace FitnessTracker.Infrastructure.Data.Context
 
                 entity.Property(u => u.Email)
                 .IsRequired()
-                .HasMaxLength(30);
-
-                entity.Property(u => u.DateOfBirth)
-                .HasColumnType("date")
-                .IsRequired();
-
-                entity.Property(u => u.Gender)
-                .HasConversion<string>();
-
-                entity.Property(u => u.ActivityLevel)
-                .HasConversion<string>()
-                .IsRequired();
-
-                entity.OwnsOne(u => u.BodyMetrics, bodyMetrics =>
-                {
-                    bodyMetrics.Property(bm => bm.Height)
-                    .HasColumnType("decimal(5,2)");
-
-                    bodyMetrics.Property(bm => bm.Weight)
-                    .HasColumnType("decimal(5, 2)");
-
-                    bodyMetrics.ToTable("Users");
-                });
+                .HasMaxLength(30);                
             });
 
             // Configure Goal Entity
@@ -59,9 +37,6 @@ namespace FitnessTracker.Infrastructure.Data.Context
             {
                 entity.HasKey(g => g.Id);
 
-                entity.HasOne(g => g.UserDetail)
-                .WithMany(u => u.Goals)
-                .HasForeignKey(g => g.UserId);
 
                 entity.Property(g => g.GoalType)
                 .HasConversion<string>()
